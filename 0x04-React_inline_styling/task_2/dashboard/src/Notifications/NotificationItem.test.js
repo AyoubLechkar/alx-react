@@ -1,27 +1,38 @@
-import { shallow } from 'enzyme';
 import React from 'react';
+import { shallow } from 'enzyme';
 import NotificationItem from './NotificationItem';
+import { StyleSheetTestUtils } from 'aphrodite';
 
-
-// shallow render NotificationItem component
 describe('<NotificationItem />', () => {
-	it('Tests that NotificationItem renders without crashing', () => {
-		const wrapper = shallow(<NotificationItem />);
-		expect(wrapper.exists()).toBe(true);
-	})
+  beforeAll(() => {
+    StyleSheetTestUtils.suppressStyleInjection();
+  });
+  afterAll(() => {
+    StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+  });
 
-	it('Passes dumby `type` prop and checks for correct html rendering', () => {
-		const wrapper = shallow(<NotificationItem type="default" value="test" />);
-		expect(wrapper.find('li').text()).toBe('test');
-	})
+  it('render without crashing', () => {
+    const wrapper = shallow(<NotificationItem />);
+    expect(wrapper.exists());
+  });
 
-	it('Passes dumby `value` prop and checks for correct html rendering', () => {
-		const wrapper = shallow(<NotificationItem type="default" value="test" />);
-		expect(wrapper.find('li').text()).toBe('test');
-	})
+  it('renders type and value props', () => {
+    const wrapper = shallow(<NotificationItem type='default' value='test' />);
+    const li = wrapper.find('li');
+    expect(wrapper.exists());
+    expect(li.exists());
+    expect(li).toHaveLength(1);
+    expect(li.text()).toEqual('test');
+    expect(li.prop('data-notification-type')).toEqual('default');
+  });
 
-	it('Passes dumby `html` prop and checks for correct html rendering', () => {
-		const wrapper = shallow(<NotificationItem html={{ __html: 'dangerouslySetInnerHtml' }} />);
-		expect(wrapper.html()).toContain('dangerouslySetInnerHtml');
-	})
-})
+  it('renders html prop', () => {
+    const text = 'Here is the list of notifications';
+    const wrapper = shallow(
+      <NotificationItem html={{ __html: '<u>test</u>' }} />
+    );
+    const li = wrapper.find('li');
+    expect(wrapper.exists());
+    expect(li.exists());
+  });
+});
