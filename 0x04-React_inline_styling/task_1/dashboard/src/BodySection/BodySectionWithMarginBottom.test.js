@@ -1,43 +1,24 @@
-import React from 'react';
-import { shallow } from 'enzyme';
-import BodySectionWithMarginBottom from './BodySectionWithMarginBottom';
+import { shallow, mount } from '../../config/setupTests';
 import { StyleSheetTestUtils } from 'aphrodite';
+import React from 'react';
+import BodySection from './BodySection';
+import BodySectionWithMarginBottom from './BodySectionWithMarginBottom';
 
-describe('<BodySectionWithMarginBottom />', () => {
-  beforeAll(() => {
-    StyleSheetTestUtils.suppressStyleInjection();
-  });
-  afterAll(() => {
-    StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
-  });
 
-  it('render without crashing', () => {
-    const wrapper = shallow(<BodySectionWithMarginBottom />);
-    expect(wrapper.exists());
-  });
+describe('BodySectionWithMarginBottom', () => {
+	beforeEach(() => {
+		StyleSheetTestUtils.suppressStyleInjection();
+	});
 
-  it('component and props', () => {
-    const wrapper = shallow(
-      <BodySectionWithMarginBottom title='test title'>
-        <p>test children node</p>
-      </BodySectionWithMarginBottom>
-    );
-    expect(wrapper.exists());
-    const div = wrapper.find('.bodySectionWithMargin').first();
-    const BodySection = wrapper.find('BodySection');
-    const internalBody = BodySection.dive();
-    const h2 = internalBody.find('h2');
-    const p = internalBody.find('p');
-    expect(div.exists());
-    expect(BodySection.exists());
-    expect(internalBody.exists());
-    expect(h2.exists());
-    expect(p.exists());
-    expect(BodySection).toHaveLength(1);
-    expect(BodySection.props().title).toEqual('test title');
-    expect(h2).toHaveLength(1);
-    expect(h2.text()).toEqual('test title');
-    expect(p).toHaveLength(1);
-    expect(p.text()).toEqual('test children node');
-  });
-});
+	it(`Checks that component correctly renders a <BodySection /> component`, () => {
+		const wrapper = shallow(<BodySectionWithMarginBottom title="test"/>);
+		expect(wrapper.find(BodySection).exists()).toBe(true);
+	})
+
+	it(`Checks that props are passed correctly to child component`, () => {
+		const wrapper = shallow(<BodySectionWithMarginBottom title="test title"><p>test children</p></BodySectionWithMarginBottom>)
+		expect(wrapper.find(BodySection).props().title).toBe('test title');
+		// p tag is child component in this instance
+		expect(wrapper.find('p').text()).toBe('test children');
+	})
+})
